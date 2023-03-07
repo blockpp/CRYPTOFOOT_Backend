@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 var crypto = require("crypto");
+const { Binary } = require("bson");
+const aes256 = require("aes256");
+require('dotenv').config();
+
 const options = {discriminatorKey: 'itemtype'};
 
 const UserSchema = new mongoose.Schema({
@@ -15,18 +19,25 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    pubKey: {
-        type: String,
-        required: true,
-    },
-    privKey: {
-        type: String,
-        required: true
-    },
+    // pubKey: {
+    //     type: String,
+    //     required: true,
+    // },
+    // privKey: {
+    //     type: String,
+    //     required: true
+    // },
     created_at: {
-        type: Data,
+        type: Date,
         default: Date.now(),
     },
+    // image: {
+    //     type: Buffer,
+    // },
+    validated: {
+        type: Boolean,
+        default: false,
+    }
 
 }, options);
 
@@ -40,5 +51,11 @@ UserSchema.method.validPassword = function(password){
         console.log(password,hash,this.hash);
         return this.hash === hash;
 };
-
+UserSchema.methods.setWallet = function(wallet){
+    var encryptedPrivKey = aes256.encrypt(process.env.CRYPT_KEY);
+    this.privKey = encryptedPrivKey;
+};
+UserSchema.methods.getWallet = function(){
+    return aes256.decrypt(process.env.CRYPT_KEY, this.privKey);
+}
 module.exports = User = mongoose.model('user',UserSchema);
