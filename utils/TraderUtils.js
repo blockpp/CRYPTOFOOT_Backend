@@ -54,5 +54,16 @@ module.exports = class TraderUtils{
             return null;
         }
     }
+    async getTraderByEmail(_email){
+        try{
+            let trader = await Trader.findOne({'email': _email});
+            if(trader == null ){
+                return false;
+            }
+            return trader;
+        }catch(error) {
+            return null;
+        }
+    }
     
 }
