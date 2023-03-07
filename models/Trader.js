@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-var aes256 = require('aes256');
 const User = require('./User');
 const TraderSchema = new mongoose.Schema({
     cin: {
@@ -26,5 +25,6 @@ const TraderSchema = new mongoose.Schema({
     }
 });
 
-var Trader = User.discriminator("trader", TraderSchema);
+
+let Trader = User.discriminator("trader", TraderSchema);
 module.exports = Trader = mongoose.model('trader');
