@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 var crypto = require("crypto");
-const { Binary } = require("bson");
 const aes256 = require("aes256");
 require('dotenv').config();
 
-const options = {discriminatorKey: 'itemtype'};
+const options = {discriminatorKey: 'role'};
 
 const UserSchema = new mongoose.Schema({
     username : {
@@ -21,11 +20,9 @@ const UserSchema = new mongoose.Schema({
     },
     pubKey: {
         type: String,
-        required: true,
     },
     privKey: {
         type: String,
-        required: true
     },
     created_at: {
         type: Date,
