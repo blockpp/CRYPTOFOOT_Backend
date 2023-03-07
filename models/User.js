@@ -19,21 +19,21 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // pubKey: {
-    //     type: String,
-    //     required: true,
-    // },
-    // privKey: {
-    //     type: String,
-    //     required: true
-    // },
+    pubKey: {
+        type: String,
+        required: true,
+    },
+    privKey: {
+        type: String,
+        required: true
+    },
     created_at: {
         type: Date,
         default: Date.now(),
     },
-    // image: {
-    //     type: Buffer,
-    // },
+    image: {
+        type: Buffer,
+    },
     validated: {
         type: Boolean,
         default: false,

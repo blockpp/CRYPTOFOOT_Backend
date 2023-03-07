@@ -4,7 +4,9 @@ var router = express.Router();
 const TraderUtils = require('../utils/TraderUtils');
 const trader = new TraderUtils();
 router.post('/', async(req,res) => {
-    await trader.addTrader(req.body).then((resp) => {
+    const parsedTrader= JSON.parse(JSON.stringify(req.body));
+    console.log(parsedTrader);
+    trader.addTrader(parsedTrader).then((resp) => {
         if(resp){
             return res.status(201).send({
                 message: "Trader created",
