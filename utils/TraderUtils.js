@@ -31,15 +31,15 @@ module.exports = class TraderUtils{
         }
     }
     async getAllTrader(){
-            try {
-                let traders = await Trader.find();
-                if(traders === null ){
-                    return false;
-                }
-                return traders;
-            } catch (error) {
-                return null;
+        try {
+            let traders = await Trader.find();
+            if(traders === null ){
+                return false;
             }
+            return traders;
+        } catch (error) {
+            return null;
+        }
     }
 
     async getTraderById(_id){
