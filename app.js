@@ -8,6 +8,8 @@ const mongoose = require("mongoose");
 var connectDB = require('./db');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+const bodyParser = require('body-parser');
+const traderRouter = require('./routes/Trader');
 var app = express();
 // view engine setup
 
@@ -20,10 +22,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/trader',traderRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
