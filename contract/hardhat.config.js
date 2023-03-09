@@ -5,8 +5,8 @@ require('hardhat-abi-exporter');
 module.exports = {
   networks: {
     localhost: {
-      url: "http://localhost:8545",
-      accounts: ["0x5ee929f623ea87275c90cadedbeaac866a2833ee48bdabb576777483760c7e31"],
+      url: "http://127.0.0.1:8545",
+      accounts: ["0xf74897f369624274e178c7303fb9997a0061840d0174dcaeebaa6f4792497c2a"],
     },
     goerli : {
       url : "https://eth-goerli.g.alchemy.com/v2/iKrbf5JMaM3SIQ3juSw45meeeh0z2vy7",

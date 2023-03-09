@@ -12,7 +12,11 @@ async function main() {
   const Trader = await hre.ethers.getContractFactory("TraderContract");
   var trader = await Trader.deploy();
   await trader.deployed();
+  const  Admin = await hre.ethers.getContractFactory("AdminContract");
+  const admin = await Admin.deploy();
+  await admin.deployed()
   console.log( "Trader address", trader.address);
+  console.log( "Admin address", admin.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
