@@ -1,4 +1,5 @@
 const Corporate = require('../models/Corporate');
+const jwt = require('jsonwebtoken');
 
 module.exports = class CorporateUtils {
   constructor() {}
@@ -11,7 +12,16 @@ module.exports = class CorporateUtils {
       } else {
         const newCorporate = new Corporate(corporate);
         await newCorporate.save();
-        return newCorporate;
+
+        // Generate a JWT token for the newly added corporate
+        const token = jwt.sign({ corporateId: newCorporate._id }, process.env.JWT_SECRET, {
+          expiresIn: '1h'
+        });
+
+        return {
+          corporate: newCorporate,
+          token: token
+        };
       }
     } catch (error) {
       return error;

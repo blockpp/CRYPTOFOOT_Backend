@@ -1,24 +1,24 @@
 const mongoose = require('mongoose');
 const User = require('./User');
-
 const CorporateSchema = new mongoose.Schema({
-  fiscalAddress: {
-    type: String,
-    required: true
-  },
-  legalName: {
-    type: String,
-    required: true
-  },
-  legalCreationDate: {
-    type: String,
-    required: true
-  },
-  legalDocuments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'File'
-  }]
+    FiscalAddress: {
+        type: String,
+        required: true
+    },
+    LegalName: {
+        type: String,
+        required: true
+    },
+    LegalCreationDate: {
+        type: String,
+        required: true
+    },
+    LegalDocuments: {
+        type: [String],
+        required: true
+    }
 });
 
-const Corporate = User.discriminator('corporate', CorporateSchema);
-module.exports = Corporate;
+
+let Corporate = User.discriminator("Corporate", CorporateSchema);
+module.exports = Corporate = mongoose.model('Corporate');
