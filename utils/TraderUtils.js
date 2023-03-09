@@ -4,6 +4,18 @@ const Trader =require('../models/Trader');
 module.exports = class TraderUtils{
     constructor(){}
 
+    async getTraderByTags(_options){
+    
+        try {
+            
+            let trader = await Trader.find(_options);
+            console.log(trader, "dynamique search");   
+            return trader; 
+        } catch (error) {
+            console.log(error ,"error");
+            return null;
+        }
+    }
     async getTraderById(_id){
         try{
             let trader = await Trader.findById(_id);
@@ -59,7 +71,7 @@ module.exports = class TraderUtils{
             console.log(traderExistByUsername, "username");
             console.log(traderExistByPhoneNumber,"phone number");
             const newTrader = new Trader();
-            if(!traderExistByEmail  && !traderExistByUsername & !traderExistByPhoneNumber ){
+            if(!traderExistByEmail  && traderExistByUsername & traderExistByPhoneNumber ){
                 return false;
             }
                 newTrader.username = user.username;

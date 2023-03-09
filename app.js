@@ -10,6 +10,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const bodyParser = require('body-parser');
 const traderRouter = require('./routes/Trader');
+const Keycloak = require('./config/keycloak-config').initKeycloak();
+
 var app = express();
 // view engine setup
 
@@ -23,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
+app.use(Keycloak.middleware());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
