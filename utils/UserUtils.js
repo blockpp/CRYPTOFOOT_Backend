@@ -37,9 +37,6 @@ module.exports = class UserUtils {
     async validatePassword(_username, _password){
         try {
             const userExist = await User.findOne({'username': _username});
-            if(userExist == null ){
-                return false;
-            }
             return userExist.validPassword(_password);
         } catch (error) {
             return null;

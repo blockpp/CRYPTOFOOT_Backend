@@ -124,13 +124,57 @@ module.exports = class TraderUtils{
             if(trader == null ){
                 return false;
             }
-            return trader;
+            return true;
         }catch(error) {
             return null;
         }
     }
-    async updateTraderById(user){
-        
+    async updateTraderById(_id,user){
+        try {
+            let traderEmail =await  this.getTraderByEmail(user.email);
+            let traderUsername = await this.getTraderByUsername(user.username);
+            let traderPhoneNumber = await this.getTraderByPhoneNumber(user.phoneNumber);
+            console.log(traderUsername, "traderUsername gg");
+            console.log(traderPhoneNumber,"traderPhoneNumber bb");
+            console.log(traderEmail, "traderEmail");
+            if(!traderEmail && !traderUsername && !traderPhoneNumber){
+               let traderUpdate= await Trader.updateOne({"_id": _id}, {$set: {
+                "username": user.username,
+                "email": user.email,
+                "address": user.address,
+                "phoneNumber": user.phoneNumber,
+               }}).catch((err) => {
+                console.log(err);
+                return null;
+               });
+               console.log(traderUpdate);
+               if(traderUpdate.acknowledged){
+                    return true;
+               }else {
+                return false;
+               }
+            }
+        } catch (error) {
+            return null ;
+        }    
     }
-    
+    async deleteTraderById(_id){
+        try {
+
+            let traderExist = await this.getTraderById(_id);
+            console.log(traderExist);
+            if(traderExist){
+            let trader = await Trader.deleteOne(traderExist).catch((err) => {
+                console.log(err);
+                return null;
+            });
+            return true;
+            }else {
+                return false;
+            }
+        } catch (error) {
+            console.log(error)
+            return null
+        }
+    }
 }

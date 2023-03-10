@@ -1,4 +1,5 @@
 var express = require('express');
+const Trader = require('../models/Trader');
 var router = express.Router();
 const TraderUtils = require('../utils/TraderUtils');
 const trader = new TraderUtils();
@@ -108,8 +109,60 @@ router.post('/search',async(req , res) => {
     }).catch((error) => {
         console.log(error);
         return res.status(504).send("bad gateway");
-    } )
+    });
+});
 
-})
+router.put('/', async(req,res) => {
+    try {
+        let id = req.query.id;
+        let user  = JSON.parse(JSON.stringify(req.body));
+        await trader.updateTraderById(id,user).then((resp) => {
+            if(resp){
+                return res.status(200).send({
+                    message: "trader profile updated",
+                    value :resp,
+                });
+            }else if(!resp){
+                return res.status(404).send({
+                    message: "trader profile not found",
+                    value :resp,
+                });
+            }else {
+                return res.status(500).send({
+                    message: "Internal Server Error",
+                    value :resp,
+                });
+            }
+        });     
+    } catch (error) {
+        return res.status(504).send("bad gateway");
+    }
+});
+
+router.delete('/', async(req,res) => {
+    try {
+        let id = req.query.id;
+        await trader.deleteTraderById(id).then((resp) => {
+            if(!resp){
+                return res.status(404).send({
+                    message:"trader not deleted",
+                    value :resp,
+                });
+            }else if (resp == null ){
+                return res.status(500).send({
+                    message:"server error",
+                    value :resp,
+                });
+            }else {
+                return res.status(200).send({
+                    message:"trader  deleted",
+                    value :resp,
+                });
+            }
+        });
+    } catch (error) {
+        return res.status(504).send("bad gateway");
+    }
+});
 
 module.exports =  router;
