@@ -23,6 +23,7 @@ const TraderSchema = new mongoose.Schema({
         type: String,
         required: true,
     }
+    
 });
 
 

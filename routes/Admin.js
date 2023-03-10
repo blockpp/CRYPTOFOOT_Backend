@@ -1,67 +1,85 @@
+const { json } = require('body-parser');
 const express = require('express');
 const router = express.Router();
-const admin = require('../utils/AdmiUtils');
-const Admin = new admin();
-router.post('/', async (req, res) => {
-  try {
-    await Admin.addAdmin(req.body).then((response) => {
-      res.send(response);
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err);
-  }
-});
+const TraderUtils = require('../utils/TraderUtils');
+const trader = new TraderUtils();
 
 router.get('/', async (req, res) => {
   try {
-    const admins = await Admin.find({});
-    res.send(admins);
+    const traders = await trader.getAllTrader();
+    if (traders.length === 0) {
+      return res.status(404).send({
+        message: "No traders yet",
+        value: traders,
+      });
+    } else {
+      return res.status(200).send({
+        message: "Traders found",
+        value: traders,
+      });
+    }
   } catch (err) {
-    res.status(500).send(err);
+    console.log(err);
+    return res.status(502).send("Bad Gateway");
   }
 });
 
 router.get('/:id', async (req, res) => {
+  const id = req.params.id;
   try {
-    const admin = await Admin.findById(req.params.id);
-    if (!admin) {
-      return res.status(404).send();
+    const traderData = await trader.getTraderById(id);
+    if (!traderData) {
+      return res.status(404).send({
+        message: "Trader not found",
+        value: traderData
+      });
+    } else {
+      return res.status(200).send({
+        message: "Trader found",
+        value: traderData
+      });
     }
-    res.send(admin);
   } catch (err) {
-    res.status(500).send(err);
+    console.log(err);
+    return res.status(502).send("Bad Gateway");
   }
 });
 
-router.patch('/:id', async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'email', 'password'];
-  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-  if (!isValidOperation) {
-    return res.status(400).send({ error: 'Invalid updates!' });
-  }
-
+router.get('/email/:email', async (req, res) => {
+  const email = req.params.email;
   try {
-    const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!admin) {
-      return res.status(404).send();
+    const traderData = await trader.getTraderByEmail(email);
+    if (!traderData) {
+      return res.status(404).send({
+        message: `Trader with email ${email} not found`,
+        value: traderData,
+      });
+    } else {
+      return res.status(200).send({
+        message: "Trader found",
+        value: traderData
+      });
     }
-    res.send(admin);
   } catch (err) {
-    res.status(500).send(err);
+    console.log(err);
+    return res.status(502).send("Bad Gateway");
   }
 });
 
-router.delete('/:id', async (req, res) => {
+router.post('/', async (req, res) => {
+  const parsedTrader = req.body;
   try {
-    const admin = await Admin.findByIdAndDelete(req.params.id);
-    if (!admin) {
-      return res.status(404).send();
-    }
-    res.send(admin);
+    const newTrader = await trader.addTrader(parsedTrader);
+    return res.status(201).send({
+      message: "Trader created",
+      value: newTrader
+    });
   } catch (err) {
-    res.status(500).send(err);
+    console.log(err);
+    return res.status(500).send({
+      message: "Server error",
+      value: null
+    });
   }
 });
 
