@@ -1,3 +1,20 @@
+const express = require('express');
+const session = require('express-session');
+const Keycloak = require('keycloak-connect');
+
+const keycloak = new Keycloak({ /* keycloak options */ });
+
+app.use(session({ /* session options */ }));
+app.use(keycloak.middleware());
+
+
+
+
+
+
+
+
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
