@@ -1,3 +1,12 @@
+const express = require('express');
+const { getTokenFromHeader } = require('../utils/AuthUtils');
+const Trader = require('../models/Trader');
+
+
+
+
+
+
 const { json } = require('body-parser');
 var express = require('express');
 var router = express.Router();
@@ -93,5 +102,69 @@ router.post('/', async(req,res) => {
     })
         
 })
+
+
+
+
+// Get the trader associated with the authenticated token
+router.get('/', keycloak.protect(), async (req, res) => {
+    const token = getTokenFromHeader(req);
+    const traderId = token.sub;
+  
+    try {
+      const trader = await Trader.findById(traderId);
+      if (!trader) {
+        return res.status(404).json({ error: 'Trader not found' });
+      }
+  
+      res.json({ trader });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+  
+  // Create a new trader
+  router.post('/', async (req, res) => {
+    const { email, password, name } = req.body;
+  
+    try {
+      // Check if the email already exists
+      const existingTrader = await Trader.findOne({ email });
+      if (existingTrader) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+  
+      // Create the trader
+      const newTrader = new Trader({ email, password, name });
+      await newTrader.save();
+  
+      res.json({ message: 'Trader created successfully' });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+  
+  // Delete a trader
+  router.delete('/', keycloak.protect(), async (req, res) => {
+    const token = getTokenFromHeader(req);
+    const traderId = token.sub;
+  
+    try {
+      const trader = await Trader.findById(traderId);
+      if (!trader) {
+        return res.status(404).json({ error: 'Trader not found' });
+      }
+  
+      await trader.delete();
+      res.json({ message: 'Trader deleted successfully' });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+  
+  module.exports = router;
 
 module.exports =  router;
