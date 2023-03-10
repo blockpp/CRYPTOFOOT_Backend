@@ -40,13 +40,13 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.methods.setPassword = function(password) {
     this.salt = crypto.randomBytes(16).toString('base64');
-    this.hash = crypto.pbkdf2Sync(password, this.salt,1000,64,'sha512').toString('base64');
+    this.password = crypto.pbkdf2Sync(password, this.salt,1000,64,'sha512').toString('base64');
 };
 UserSchema.method.validPassword = function(password){
     var hash = crypto.pbkdf2Sync(password,
-        this.salt,1000,64,"sha512").toString('base64');
-        console.log(password,hash,this.hash);
-        return this.hash === hash;
+    this.password,1000,64,"sha512").toString('base64');
+    console.log(password,hash,this.password);
+    return this.password === hash;
 };
 UserSchema.methods.setWallet = function(wallet){
     var encryptedPrivKey = aes256.encrypt(process.env.CRYPT_KEY);

@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 const express = require('express');
 const { getTokenFromHeader } = require('../utils/AuthUtils');
 const Trader = require('../models/Trader');
@@ -8,7 +10,9 @@ const Trader = require('../models/Trader');
 
 
 const { json } = require('body-parser');
+>>>>>>> main
 var express = require('express');
+const Trader = require('../models/Trader');
 var router = express.Router();
 const TraderUtils = require('../utils/TraderUtils');
 const trader = new TraderUtils();
@@ -101,7 +105,78 @@ router.post('/', async(req,res) => {
         return res.status(502).send("bad gateway");
     })
         
-})
+});
+
+router.post('/search',async(req , res) => {
+    let query = {}
+    const parsedquery= req.body;
+    for(var key in parsedquery){ //could also be req.query and req.params
+        parsedquery[key] !== "" ? query[key] = parsedquery[key] : null;
+    }
+    console.log(query);
+    await trader.getTraderByTags(query).then((resp) => {
+        if(resp == null ) {
+            return res.status(500).send("server error")
+        };
+        return res.status(200).send((resp));
+    }).catch((error) => {
+        console.log(error);
+        return res.status(504).send("bad gateway");
+    });
+});
+
+router.put('/', async(req,res) => {
+    try {
+        let id = req.query.id;
+        let user  = JSON.parse(JSON.stringify(req.body));
+        await trader.updateTraderById(id,user).then((resp) => {
+            if(resp){
+                return res.status(200).send({
+                    message: "trader profile updated",
+                    value :resp,
+                });
+            }else if(!resp){
+                return res.status(404).send({
+                    message: "trader profile not found",
+                    value :resp,
+                });
+            }else {
+                return res.status(500).send({
+                    message: "Internal Server Error",
+                    value :resp,
+                });
+            }
+        });     
+    } catch (error) {
+        return res.status(504).send("bad gateway");
+    }
+});
+
+router.delete('/', async(req,res) => {
+    try {
+        let id = req.query.id;
+        await trader.deleteTraderById(id).then((resp) => {
+            if(!resp){
+                return res.status(404).send({
+                    message:"trader not deleted",
+                    value :resp,
+                });
+            }else if (resp == null ){
+                return res.status(500).send({
+                    message:"server error",
+                    value :resp,
+                });
+            }else {
+                return res.status(200).send({
+                    message:"trader  deleted",
+                    value :resp,
+                });
+            }
+        });
+    } catch (error) {
+        return res.status(504).send("bad gateway");
+    }
+});
 
 
 
