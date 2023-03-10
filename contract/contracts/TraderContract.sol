@@ -24,5 +24,6 @@ contract TraderContract is AccessControl {
         traderList[msg.sender].balance = balance;
         traderList[msg.sender].created_at = block.timestamp;
     }
+    
 
 }
