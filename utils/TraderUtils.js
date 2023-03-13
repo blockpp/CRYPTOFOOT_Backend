@@ -1,9 +1,45 @@
-const { Agent } = require('http');
 const Trader =require('../models/Trader');
-
+const TraderUtilsWeb3 = require('./TraderUtilsWeb3');
+const traderUtilsWeb3 = new TraderUtilsWeb3();
 module.exports = class TraderUtils{
-    constructor(){}
+    constructor(){
+        
+    }
 
+    async validatePasswordById(_id, _password){
+        try {
+            const trader = await Trader.findById(_id);
+            if(trader === null){
+                return false; 
+            }
+            const result = await trader.validPassword(_password);
+            if(result){
+                return trader;
+            }else {
+                return result;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+    async validatePassword(_username , _password){
+        try {
+            const trader = await Trader.findOne({"username": _username});
+            if(trader === null){
+                return false; 
+            }
+            const result = await trader.validPassword(_password);
+            if(result){
+                return trader;
+            }else {
+                return result;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
     async getTraderByTags(_options){
     
         try {
@@ -70,8 +106,10 @@ module.exports = class TraderUtils{
             console.log(traderExistByEmail,"email");
             console.log(traderExistByUsername, "username");
             console.log(traderExistByPhoneNumber,"phone number");
+            let wallet =await traderUtilsWeb3.addWallet();
+            console.log(wallet.privateKey);
             const newTrader = new Trader();
-            if(!traderExistByEmail  && traderExistByUsername & traderExistByPhoneNumber ){
+            if(!traderExistByEmail  && traderExistByUsername & traderExistByPhoneNumber && wallet == null){
                 return false;
             }
                 newTrader.username = user.username;
@@ -81,6 +119,8 @@ module.exports = class TraderUtils{
                 newTrader.address = user.address;
                 newTrader.age = user.age;
                 newTrader.phoneNumber = user.phoneNumber;
+                newTrader.pubKey = wallet.address;
+                newTrader.setWallet(wallet.privateKey);
     
                 await newTrader.save().catch((error) => {
                     console.log(error);
@@ -177,4 +217,20 @@ module.exports = class TraderUtils{
             return null
         }
     }
+    async resetPassword(_id , _password,_newPassword){
+        try {
+             const trader = await this.getTraderById(_id);
+             console.log(trader ,"trader ss");
+             if(trader != null){
+                     trader.setPassword(_newPassword);
+                     await trader.save();
+                     return true;
+             }else {
+                 return false;
+             }   
+        } catch (error) {
+             console.log(error);
+             return null;
+        }
+     }
 }

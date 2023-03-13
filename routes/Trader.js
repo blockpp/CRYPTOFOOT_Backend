@@ -3,7 +3,83 @@ const Trader = require('../models/Trader');
 var router = express.Router();
 const TraderUtils = require('../utils/TraderUtils');
 const trader = new TraderUtils();
+const jwt = require("jsonwebtoken");
 
+router.post('/resetPassword',async(req,res) => {
+    try {
+        const id = req.body.id;
+        const password = req.body.password;
+        const newPassword= req.body.newPassword;
+        const confirmPassword = req.body.confirmPassword;
+        const validPassword = await  trader.validatePasswordById(id,password);
+        if(validPassword && (newPassword == confirmPassword)){
+        await trader.resetPassword(id,password,newPassword).then((resp) => {
+            console.log(resp);
+            if(resp == false){
+                return res.status(404).send({
+                    message: "Trader not found",
+                });
+            }
+            else if(resp == null){
+                return res.status(500).send({
+                    message : "internal database error",
+                    value : resp
+                });
+            }
+            else {
+                return res.status(200).send({
+                    message: "password has been updated",
+                    value :resp,
+                });
+            }
+        });
+    }else {
+        return res.status(401).send({
+            message: "unothorized bad password ",
+        });
+    }
+    } catch (error) {
+        return res.status(502).send("bad gateway");
+    }
+})
+router.post('/login',async(req,res) =>  {
+    const username = req.body.username;
+    const password = req.body.password;
+    trader.validatePassword(username, password).then((resp) => {
+        if(!resp){
+            return res.status(404).send({
+                    message : "wrong password / or username not found",
+                    value :resp,
+            }   
+            );
+        }else if(resp === null){
+            return res.status(500).send({
+                message: "database error",
+                value : resp
+            });
+        }else {
+            const payload = {
+                "username" : resp.email,
+                "username": username,
+                "role": resp.role,
+                "id" : resp._id,
+                "pubKey" : resp.pubKey,
+            }
+            jwt.sign(payload,"secret",{expiresIn:`12h`},(err,token) => {
+                if(err){
+                    res.status(403).send({
+                        message: "login error occured",
+                        value :resp
+                    });
+                }else {
+                    res.status(200).send({token: token});
+                }
+            })
+        }
+    }).catch((err) => {
+        return res.status(504).send("bad gateway");
+    })
+})
 router.get('/', async(req,res) => {
     trader.getAllTrader().then((resp) => {
         console.log(resp, "response");
