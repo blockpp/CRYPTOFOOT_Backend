@@ -4,44 +4,18 @@ const Trader =require('../models/Trader');
 module.exports = class TraderUtils{
     constructor(){}
 
-    async addTrader(user){
-        try {
-            let traderExist = await Trader.findOne({"email" : user.email});
-            if(traderExist != null){
-                return false;
-            }
-                const newTrader = new Trader();
-                newTrader.username = user.username;
-                newTrader.password = user.password;
-                newTrader.email = user.email;
-                newTrader.name = user.name;
-                newTrader.address = user.address;
-                newTrader.age = user.age;
-                newTrader.phoneNumber = user.phoneNumber;
+    async getTraderByTags(_options){
     
-                newTrader.save().catch((error) => {
-                    return null;
-                });
-                return true;
-            
-
-        } catch (error) {  
-            console.log(error,"error1");
-            return null;
-        }
-    }
-    async getAllTrader(){
         try {
-            let traders = await Trader.find();
-            if(traders === null ){
-                return false;
-            }
-            return traders;
+            
+            let trader = await Trader.find(_options);
+            console.log(trader, "dynamique search");   
+            return trader; 
         } catch (error) {
+            console.log(error ,"error");
             return null;
         }
     }
-
     async getTraderById(_id){
         try{
             let trader = await Trader.findById(_id);
@@ -56,13 +30,54 @@ module.exports = class TraderUtils{
     }
     async getTraderByEmail(_email){
         try{
-            let trader = await Trader.findOne({'email': _email});
-            if(trader == null ){
+            let traderExist = await Trader.findOne({'email': _email});
+            if(traderExist == null){
                 return false;
             }
-            return trader;
-        }catch(error) {
+            return traderExist;
+        }catch(error){
+            return null
+        }
+    }
+    async getTraderByPhoneNumber(_phoneNumber){
+        try {
+            let traderExist = await Trader.findOne({'phoneNumber': _phoneNumber});
+            if(traderExist=== null ){
+                return false;
+            }
+            return traderExist;
+        }catch (error) {
+            return false;
+        }
+    }
+    async getTraderByUsername(_username){
+        try {
+            let traderExist = await Trader.findOne({'username': _username});
+            if(traderExist=== null ){
+                return false;
+            }
+            return traderExist;
+        } catch (error) {
             return null;
+        }
+    }
+    async addTrader(user){
+        try {
+            let traderExist = (await Trader.findOne(user.email))? true: false;
+            if(!traderExist){
+                return false;
+            }else {
+                const newTrader = new Trader(user);
+                await newTrader.save().then((resp) => {
+                    if(!resp){
+                        return false;
+                    }
+                    return false
+                });
+            }
+
+        } catch (error) {   
+            return error;
         }
     }
     
