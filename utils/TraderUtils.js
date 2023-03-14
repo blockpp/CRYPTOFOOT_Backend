@@ -121,12 +121,13 @@ module.exports = class TraderUtils{
                 newTrader.phoneNumber = user.phoneNumber;
                 newTrader.pubKey = wallet.address;
                 newTrader.setWallet(wallet.privateKey);
-    
                 await newTrader.save().catch((error) => {
                     console.log(error);
                     return null;
                 });
-                return true;
+                const web3result = await traderUtilsWeb3.addTrader(newTrader._id,newTrader.pubKey);
+                
+                return web3result;
             
 
         } catch (error) {  
