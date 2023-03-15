@@ -19,15 +19,16 @@ contract Trader is AccessControl {
         admin = Admin(AdminAddress);
         _setupRole(admin.ADMIN_ROLE(), owner);
     }
-    function addTrader(string memory _id, address _traderAddress) external onlyRole(admin.ADMIN_ROLE()) {
+    function addTrader(bytes32 _id, address _traderAddress) external onlyRole(admin.ADMIN_ROLE()) {
         require(traderList[_traderAddress].created_at == 0,"trader does exist");
-        traderList[_traderAddress].id = bytes32(abi.encodePacked(_id));
+        traderList[_traderAddress].id = _id;
         traderList[_traderAddress].created_at = block.timestamp;
         _setupRole(TRADER_ROLE, _traderAddress);
         emit addCorporateEvent(_traderAddress ,traderList[_traderAddress].id,traderList[_traderAddress].created_at);
     }
     function getTrader(address _traderAddress) external view returns (trader memory) {
         require(traderList[_traderAddress].created_at != 0,"trader does not exist");
+        
         return traderList[_traderAddress];
     }
     function deleteTrader(address _traderAddress) external onlyRole(admin.ADMIN_ROLE()) {

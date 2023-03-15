@@ -13,14 +13,14 @@ contract Admin is Ownable , AccessControl {
     mapping (address => admin) adminList;
     constructor( ) {
     }
-    function addAdmin(string calldata _id, address  _address)external onlyOwner {
-        require(adminList[_address].id ==bytes32(0),"Admin does exist");
-        adminList[_address].id = bytes32(abi.encodePacked(_id));
+    function addAdmin(bytes32 _id, address  _address)external onlyOwner {
+        require(adminList[_address].created_at == 0,"Admin does exist");
+        adminList[_address].id = _id;
         adminList[_address].created_at = block.timestamp;
         _setupRole(ADMIN_ROLE,_address);
     }
-    function deleteAdmin(address _address, string calldata _id) external onlyOwner {
-        require(adminList[_address].id ==bytes32(abi.encodePacked(_id)),"Admin not matched");
+    function deleteAdmin(address _address, bytes32 _id) external onlyOwner {
+        require(adminList[_address].id ==_id,"Admin not matched");
         delete adminList[_address];       
         _revokeRole(ADMIN_ROLE,_address);
 

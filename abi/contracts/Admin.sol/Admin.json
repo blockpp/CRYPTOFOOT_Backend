@@ -127,9 +127,9 @@
   {
     "inputs": [
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "_id",
-        "type": "string"
+        "type": "bytes32"
       },
       {
         "internalType": "address",
@@ -150,9 +150,9 @@
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "bytes32",
         "name": "_id",
-        "type": "string"
+        "type": "bytes32"
       }
     ],
     "name": "deleteAdmin",

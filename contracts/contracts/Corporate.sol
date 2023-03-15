@@ -19,9 +19,9 @@ contract Corporate is AccessControl {
         roles=  Admin(RolesAddress);
         _setupRole(roles.ADMIN_ROLE(),owner);
     }
-    function addCorporate(string memory _id, address _corporateAddress) external onlyRole(roles.ADMIN_ROLE()){
+    function addCorporate(bytes32 _id, address _corporateAddress) external onlyRole(roles.ADMIN_ROLE()){
         require(corporateList[_corporateAddress].created_at == 0,"corporate does exist");
-        corporateList[_corporateAddress].id = bytes32(abi.encodePacked(_id));
+        corporateList[_corporateAddress].id = _id;
         corporateList[_corporateAddress].created_at = block.timestamp;
         _setupRole(CORPORATE_ROLE, _corporateAddress);
         emit addCorporateEvent(_corporateAddress,corporateList[_corporateAddress].id,corporateList[_corporateAddress].created_at);

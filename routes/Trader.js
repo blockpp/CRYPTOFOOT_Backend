@@ -240,5 +240,28 @@ router.delete('/', async(req,res) => {
         return res.status(504).send("bad gateway");
     }
 });
-
+router.get('/web3',async(req,res) =>  {
+    const id  = req.query.id.toString();
+    await trader.getTraderWeb3ById(id).then((resp) => {
+        if(resp == null ){
+            return res.status(500).send({
+                message : "server error",
+                value: resp,
+            });
+        }else if (resp == false){
+            return res.status(404).send({
+                message : "trader not found",
+                value :resp,
+            });
+        }else {
+            return res.status(200).send({
+                message: "trader found",
+                value : resp,
+            });
+        }
+    }).catch((err) => {
+        console.log(err);
+        return res.status(504).send("bad gateway");
+    })
+});
 module.exports =  router;

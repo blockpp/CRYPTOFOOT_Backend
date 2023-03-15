@@ -23,8 +23,8 @@ module.exports  = class TraderUtilsWeb3{
             const wallet = new Wallet(this.privateKey,this.provider).connect(this.provider);
             const trader = new ethers.Contract(this.ContractAddress,traderJson, wallet);
             const gasPrice = await this.provider.getFeeData();
-
-            const tx = await trader.addTrader(_id,_pubKey,{
+            const idBytes = ethers.utils.formatBytes32String(_id)
+            const tx = await trader.addTrader(idBytes,_pubKey,{
                 gasPrice : gasPrice.gasPrice.toHexString(),
                 gasLimit : ethers.BigNumber.from(300000).toHexString()
             });
@@ -33,6 +33,28 @@ module.exports  = class TraderUtilsWeb3{
             return true;
         } catch (error) {
             console.log(error);
+            return null;
+        }   
+    }
+    async getTrader(_privateKey) {
+        try {
+            const tr = {
+                "id": "",
+                "created_at" : ""
+            };
+            await this.provider.getNetwork();
+            const wallet = new Wallet(_privateKey,this.provider).connect(this.provider);
+            const trader = new ethers.Contract(this.ContractAddress,traderJson, wallet);
+            console.log(wallet.address);
+            const tx = await trader.getTrader(wallet.address);
+            console.log(tx)
+            tr.id = tx.id;
+            
+            tr.created_at = ethers.BigNumber.from(tx.created_at).toString();
+            return tr;
+        } catch (error) {
+            console.log(error);
+
             return null;
         }
     }

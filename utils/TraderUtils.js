@@ -233,5 +233,21 @@ module.exports = class TraderUtils{
              console.log(error);
              return null;
         }
-     }
+    }
+    async getTraderWeb3ById(_id){
+        try {
+            let trader = await Trader.findById(_id);
+            if(trader == null){
+                return false;
+            }else {
+                const privateKey = trader.getWallet().toString();
+                console.log(privateKey);
+                let traderWeb3 = await traderUtilsWeb3.getTrader(privateKey);
+                return traderWeb3;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
 }
