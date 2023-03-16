@@ -8,18 +8,18 @@ contract Trader is AccessControl {
     bytes32 public constant TRADER_ROLE = keccak256("TRADER_ROLE");
     Admin admin;
     struct trader{
-        bytes32 id;
+        string id;
         uint256 created_at;
     }
     mapping (address => trader) private traderList ;
-    event addCorporateEvent(address , bytes32, uint256);
+    event addCorporateEvent(address , string, uint256);
     event deleteCorporateEvent(address,uint256);
     constructor(address AdminAddress) {
         owner = msg.sender;
         admin = Admin(AdminAddress);
         _setupRole(admin.ADMIN_ROLE(), owner);
     }
-    function addTrader(bytes32 _id, address _traderAddress) external onlyRole(admin.ADMIN_ROLE()) {
+    function addTrader(string calldata _id, address _traderAddress) external onlyRole(admin.ADMIN_ROLE()) {
         require(traderList[_traderAddress].created_at == 0,"trader does exist");
         traderList[_traderAddress].id = _id;
         traderList[_traderAddress].created_at = block.timestamp;

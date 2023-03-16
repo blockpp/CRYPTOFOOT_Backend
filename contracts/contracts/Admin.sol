@@ -7,20 +7,19 @@ contract Admin is Ownable , AccessControl {
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
 
     struct admin {
-        bytes32 id;
+        string id;
         uint256 created_at;
     }
     mapping (address => admin) adminList;
     constructor( ) {
     }
-    function addAdmin(bytes32 _id, address  _address)external onlyOwner {
+    function addAdmin(string calldata _id, address  _address)external onlyOwner {
         require(adminList[_address].created_at == 0,"Admin does exist");
         adminList[_address].id = _id;
         adminList[_address].created_at = block.timestamp;
         _setupRole(ADMIN_ROLE,_address);
     }
-    function deleteAdmin(address _address, bytes32 _id) external onlyOwner {
-        require(adminList[_address].id ==_id,"Admin not matched");
+    function deleteAdmin(address _address) external onlyOwner {
         delete adminList[_address];       
         _revokeRole(ADMIN_ROLE,_address);
 

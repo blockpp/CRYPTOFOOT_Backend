@@ -11,6 +11,9 @@ module.exports  = class TraderUtilsWeb3{
         try {
             await this.provider.getNetwork();
             const wallet = new Wallet.createRandom().connect(this.provider);
+            console.log(wallet.address, "address");
+            console.log(wallet.privateKey,"private key");
+            console.log(wallet.mnemonic, "mnemonic");
             return wallet;
             
         } catch (error) {
@@ -19,12 +22,12 @@ module.exports  = class TraderUtilsWeb3{
     }
     async addTrader(_id,_pubKey){
         try {
+            console.log(_id);
             await this.provider.getNetwork();
             const wallet = new Wallet(this.privateKey,this.provider).connect(this.provider);
             const trader = new ethers.Contract(this.ContractAddress,traderJson, wallet);
             const gasPrice = await this.provider.getFeeData();
-            const idBytes = ethers.utils.formatBytes32String(_id)
-            const tx = await trader.addTrader(idBytes,_pubKey,{
+            const tx = await trader.addTrader(_id,_pubKey,{
                 gasPrice : gasPrice.gasPrice.toHexString(),
                 gasLimit : ethers.BigNumber.from(300000).toHexString()
             });
@@ -45,17 +48,32 @@ module.exports  = class TraderUtilsWeb3{
             await this.provider.getNetwork();
             const wallet = new Wallet(_privateKey,this.provider).connect(this.provider);
             const trader = new ethers.Contract(this.ContractAddress,traderJson, wallet);
-            console.log(wallet.address);
             const tx = await trader.getTrader(wallet.address);
             console.log(tx)
-            tr.id = tx.id;
-            
+            tr.id = tx.id.toString();
             tr.created_at = ethers.BigNumber.from(tx.created_at).toString();
             return tr;
         } catch (error) {
             console.log(error);
 
             return null;
+        }
+    }
+    async getWallet(_privKey){
+        try{
+            const walletJson = {
+                "address": "",
+                "balance" : ""
+            }
+            await this.provider.getNetwork();
+            const wallet  = new Wallet(_privKey,this.provider).connect(this.provider);
+            walletJson.address = wallet.address;
+            const balance = await this.provider.getBalance(wallet.address);
+            walletJson.balance = ethers.utils.formatEther(balance);
+            return walletJson;
+        }catch(error){
+            console.log(error);
+            return null
         }
     }
 }

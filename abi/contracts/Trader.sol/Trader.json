@@ -96,9 +96,9 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "indexed": false,
@@ -158,9 +158,9 @@
   {
     "inputs": [
       {
-        "internalType": "bytes32",
+        "internalType": "string",
         "name": "_id",
-        "type": "bytes32"
+        "type": "string"
       },
       {
         "internalType": "address",
@@ -218,9 +218,9 @@
       {
         "components": [
           {
-            "internalType": "bytes32",
+            "internalType": "string",
             "name": "id",
-            "type": "bytes32"
+            "type": "string"
           },
           {
             "internalType": "uint256",

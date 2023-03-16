@@ -262,6 +262,29 @@ router.get('/web3',async(req,res) =>  {
     }).catch((err) => {
         console.log(err);
         return res.status(504).send("bad gateway");
-    })
+    });
 });
+router.get('/wallet',async(req,res) => {
+    const id = req.query.id;
+    await trader.getWalletById(id).then((resp) => {
+        if(resp ==false ){
+            return res.status(404).send({
+                message: "trader not found",
+                value :resp
+            });
+        }else if(resp == null){
+            return res.status(500).send({
+                message : "server error",
+                value :resp
+            });
+        }else {
+            return res.status(200).send({
+                message: "trader wallet found",
+                value : resp
+            });
+        }
+    }).catch((err) => {
+        return res.status(504).send("bad gateway");
+    })
+})
 module.exports =  router;

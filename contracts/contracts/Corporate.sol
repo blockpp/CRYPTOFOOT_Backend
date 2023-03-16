@@ -8,18 +8,18 @@ contract Corporate is AccessControl {
 
     address private owner;
     struct corporate {
-        bytes32 id;
+        string id;
         uint256 created_at;
     }
     mapping(address => corporate) private corporateList;
-    event addCorporateEvent(address,bytes32,uint256);
+    event addCorporateEvent(address,string,uint256);
     event deleteCorporateEvent(address,uint256);
     constructor(address RolesAddress) {
         owner = msg.sender;
         roles=  Admin(RolesAddress);
         _setupRole(roles.ADMIN_ROLE(),owner);
     }
-    function addCorporate(bytes32 _id, address _corporateAddress) external onlyRole(roles.ADMIN_ROLE()){
+    function addCorporate(string calldata _id, address _corporateAddress) external onlyRole(roles.ADMIN_ROLE()){
         require(corporateList[_corporateAddress].created_at == 0,"corporate does exist");
         corporateList[_corporateAddress].id = _id;
         corporateList[_corporateAddress].created_at = block.timestamp;

@@ -250,4 +250,18 @@ module.exports = class TraderUtils{
             return null;
         }
     }
+    async getWalletById(_id){
+        try {
+            const trader = await Trader.findById(_id);
+            if(trader == null ){
+                return false;
+            }else {
+                const privKey = trader.getWallet();
+                const wallet = await traderUtilsWeb3.getWallet(privKey);
+                return wallet;
+            }
+        } catch (error) {
+            return null;
+        }
+    }
 }

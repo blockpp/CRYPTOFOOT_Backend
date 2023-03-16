@@ -1,68 +1,55 @@
 const express = require('express');
 const router = express.Router();
-const admin = require('../utils/AdmiUtils');
+const admin = require('../utils/AdminUtils');
 const Admin = new admin();
 router.post('/', async (req, res) => {
-  try {
-    await Admin.addAdmin(req.body).then((response) => {
-      res.send(response);
-    });
-  } catch (err) {
+  
+    const parsedTrader= JSON.parse(JSON.stringify(req.body));
+    await Admin.addAdmin(parsedTrader).then((response) => {
+      console.log(response, "response");
+      if(response){
+        return res.status(201).send({
+          message : "Admin has been created",
+          value :response,
+        });
+      }else if (!response) {
+        return res.status(400).send({
+          message : "admin does exist change username , email or phone number",
+          value :response
+        });
+      }else {
+        return res.status(500).send({
+          message :"database error",
+          value :response 
+        });
+      }
+    }).
+   catch ((err) => {
     console.error(err);
-    res.status(500).send(err);
-  }
+    res.status(502).send(err);
+  });
 });
-
-router.get('/', async (req, res) => {
-  try {
-    const admins = await Admin.find({});
-    res.send(admins);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
-router.get('/:id', async (req, res) => {
-  try {
-    const admin = await Admin.findById(req.params.id);
-    if (!admin) {
-      return res.status(404).send();
+router.get('/',async(req,res) => {
+  
+  await Admin.getAll().then((resp)  => {
+    if(!resp) {
+      return res.status(404).send({
+        message : "no admins found",
+        value : resp
+      });
+    }else if (resp == null) {
+      return res.status(500).send({
+        message : "Data base error",
+      });
+    }else {
+      return res.status(200).send({
+        message : "Admins found",
+        value : resp
+      });
     }
-    res.send(admin);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
-router.patch('/:id', async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'email', 'password'];
-  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-  if (!isValidOperation) {
-    return res.status(400).send({ error: 'Invalid updates!' });
-  }
-
-  try {
-    const admin = await Admin.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!admin) {
-      return res.status(404).send();
-    }
-    res.send(admin);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
-router.delete('/:id', async (req, res) => {
-  try {
-    const admin = await Admin.findByIdAndDelete(req.params.id);
-    if (!admin) {
-      return res.status(404).send();
-    }
-    res.send(admin);
-  } catch (err) {
-    res.status(500).send(err);
-  }
+  }).catch((err) => {
+    return res.status(502).send("bad gateway");
+  });
 });
 
 module.exports = router;

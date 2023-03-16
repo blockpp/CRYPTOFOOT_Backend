@@ -24,11 +24,15 @@ async function main() {
   const Trader = await hre.ethers.getContractFactory("Trader");
   const trader = await Trader.deploy(admin.address);
   await trader.deployed();
+  //ERC20 Contract deployment
+  const OlympCoin = await hre.ethers.getContractFactory("OlympCoin");
+  const olympCoin = await OlympCoin.deploy(10000000);
 
   console.log(roles.address,"Roles Contract address");
   console.log(admin.address,"admin Contract address");
   console.log(corporate.address,"corporate Contract address");
   console.log(trader.address,"trader Contract address");
+  console.log(olympCoin.address,"OlymCoin Contract address");
   
 
 
