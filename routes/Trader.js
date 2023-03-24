@@ -4,7 +4,7 @@ var router = express.Router();
 const TraderUtils = require('../utils/TraderUtils');
 const trader = new TraderUtils();
 const jwt = require("jsonwebtoken");
-
+const authenticateTrader = require('../middleware/Authenticate');
 router.post('/resetPassword',async(req,res) => {
     try {
         const id = req.body.id;
@@ -59,7 +59,7 @@ router.post('/login',async(req,res) =>  {
             });
         }else {
             const payload = {
-                "username" : resp.email,
+                "email" : resp.email,
                 "username": username,
                 "role": resp.role,
                 "id" : resp._id,
@@ -102,7 +102,7 @@ router.get('/', async(req,res) => {
     });
 });
 
-router.get('/', async(req, res) => {
+router.get('/id', authenticateTrader,async(req, res) => {
     const id = req.query.id.toString();
     await trader.getTraderById(id).then((resp) => {
         if(!resp) {
@@ -123,7 +123,7 @@ router.get('/', async(req, res) => {
     });
 });
 
-router.get('/', async(req,res) => {
+router.get('/email', async(req,res) => {
     const email = req.query.email;
     await traider.getTraderByEmail(email).then((resp) => {
         if(!resp) return res.status(404).send({

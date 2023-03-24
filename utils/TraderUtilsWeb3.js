@@ -59,21 +59,5 @@ module.exports  = class TraderUtilsWeb3{
             return null;
         }
     }
-    async getWallet(_privKey){
-        try{
-            const walletJson = {
-                "address": "",
-                "balance" : ""
-            }
-            await this.provider.getNetwork();
-            const wallet  = new Wallet(_privKey,this.provider).connect(this.provider);
-            walletJson.address = wallet.address;
-            const balance = await this.provider.getBalance(wallet.address);
-            walletJson.balance = ethers.utils.formatEther(balance);
-            return walletJson;
-        }catch(error){
-            console.log(error);
-            return null
-        }
-    }
+
 }

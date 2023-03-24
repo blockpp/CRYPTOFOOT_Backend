@@ -1,67 +1,63 @@
-const { ethers , Wallet} = require("ethers");
-const USER_REGISTRY_ABI = require('../abi/contracts/AdminContract.sol/AdminContract.json');
 require("dotenv").config();
-const USER_REGISTRY_ADDRESS = "USER_REGISTRY_CONTRACT_ADDRESS";
-const ADMIN_ADDRESS = "ADMIN_ADDRESS";
+const {ethers, Wallet} = require("ethers");
+const traderJson = require("../abi/contracts/Admin.sol/Admin.json");
+module.exports  = class adminutilsWEB3{
+    constructor(){
+        this.privateKey = process.env.PRIVATE_KEY;
+        this.provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URI);
+        this.ContractAddress = process.env.ADMIN_ADDRESS;
+    }
+    async addWallet(){
+        try {
+            await this.provider.getNetwork();
+            const wallet = new Wallet.createRandom().connect(this.provider);
+            console.log(wallet.address, "address");
+            console.log(wallet.privateKey,"private key");
+            console.log(wallet.mnemonic, "mnemonic");
+            return wallet;
+            
+        } catch (error) {
+            return null
+        }
+    }
+    async addAdmin(_id,_pubKey){
+        try {
+            console.log(_id);
+            await this.provider.getNetwork();
+            const wallet = new Wallet(this.privateKey,this.provider).connect(this.provider);
+            const trader = new ethers.Contract(this.ContractAddress,traderJson, wallet);
+            const gasPrice = await this.provider.getFeeData();
+            const tx = await trader.addAdmin(_id,_pubKey,{
+                gasPrice : gasPrice.gasPrice.toHexString(),
+                gasLimit : ethers.BigNumber.from(300000).toHexString()
+            });
+            await tx.wait();
+            console.log(tx,"hash");
+            return true;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }   
+    }
+    async getAdmin(_privateKey) {
+        try {
+            const tr = {
+                "id": "",
+                "created_at" : ""
+            };
+            await this.provider.getNetwork();
+            const wallet = new Wallet(_privateKey,this.provider).connect(this.provider);
+            const trader = new ethers.Contract(this.ContractAddress,traderJson, wallet);
+            const tx = await trader.getAdmin(wallet.address);
+            console.log(tx)
+            tr.id = tx.id.toString();
+            tr.created_at = ethers.BigNumber.from(tx.created_at).toString();
+            return tr;
+        } catch (error) {
+            console.log(error);
 
-const provider  = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URI_DEV);
-
-const privateKey = process.env.PRIVATE_KEY;
-const contractAddress = process.env.ADMIN_ADDRESS;
-
-
-const userRegistryContract = new ethers.Contract(
-  USER_REGISTRY_ADDRESS,
-  USER_REGISTRY_ABI,
-  provider
-);
-
-async function addUser(name, email) {
-
-  await provider.getNetwork();
-  const wallet = new Wallet(privateKey,provider).connect(provider);
-  const admin = new ethers.Contract(contractAddress, USER_REGISTRY_ABI , wallet);
-  const tx = await admin.addUser(name, email);
-  tx.wait();
-  console.log(tx.hex , "tx has been added");
-
-  return tx;
+            return null;
+        }
+    }
 
 }
-
-async function deleteUser(userAddress) {
-  const tx = await userRegistryContract.connect(signer).deleteUser(userAddress);
-  await tx.wait();
-  console.log("User deleted successfully");
-}
-
-async function updateUserEmail(userAddress, newEmail) {
-  const tx = await userRegistryContract.connect(signer).updateUserEmail(userAddress, newEmail);
-  await tx.wait();
-  console.log("User email updated successfully");
-}
-
-async function updateUserValidationStatus(userAddress, validationStatus) {
-  const tx = await userRegistryContract.connect(signer).updateUserValidationStatus(userAddress, validationStatus);
-  await tx.wait();
-  console.log("User validation status updated successfully");
-}
-
-async function getUser(userAddress) {
-  const user = await userRegistryContract.getUser(userAddress);
-  console.log(`User: name=${user[0]}, email=${user[1]}, validated=${user[2]}`);
-}
-
-async function getAdmin() {
-  const admin = await userRegistryContract.getAdmin();
-  console.log(`Admin: name=${admin[0]}, email=${admin[1]}, validated=${admin[2]}`);
-}
-
-module.exports = {
-  addUser,
-  deleteUser,
-  updateUserEmail,
-  updateUserValidationStatus,
-  getUser,
-  getAdmin
-};
