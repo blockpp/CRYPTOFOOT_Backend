@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 const UserUtils = require('../utils/UserUtils');
 const jwt = require("jsonwebtoken");
-
 const userUtils = new UserUtils();
 
 /* GET home page. */

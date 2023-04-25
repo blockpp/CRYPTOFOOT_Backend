@@ -118,6 +118,7 @@ module.exports = class TraderUtils{
                 newTrader.name = user.name;
                 newTrader.address = user.address;
                 newTrader.age = user.age;
+                newTrader.bio = user.bio;
                 newTrader.phoneNumber = user.phoneNumber;
                 newTrader.pubKey = wallet.address;
                 newTrader.setWallet(wallet.privateKey);

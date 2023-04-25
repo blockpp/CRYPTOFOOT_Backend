@@ -6,7 +6,7 @@ module.exports = {
   networks: {
     localhost: {
       url: "http://localhost:8545",
-      accounts: ["0xcfb486667b2a51518ea72f01d1e60de3d3265eed21f07ad152c54fdcba3c3d3c"],
+      accounts: ["0xa25f9df9268488097d33f4186a3fc0ab03af9da8e9d227f8c34f000780a71dd0"],
       gas: 2100000,
       gasPrice: 8000000000,
       saveDeployments: true

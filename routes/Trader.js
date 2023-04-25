@@ -4,7 +4,7 @@ var router = express.Router();
 const TraderUtils = require('../utils/TraderUtils');
 const trader = new TraderUtils();
 const jwt = require("jsonwebtoken");
-const authenticateTrader = require('../middleware/Authenticate');
+
 router.post('/resetPassword',async(req,res) => {
     try {
         const id = req.body.id;
@@ -65,7 +65,7 @@ router.post('/login',async(req,res) =>  {
                 "id" : resp._id,
                 "pubKey" : resp.pubKey,
             }
-            jwt.sign(payload,"secret",{expiresIn:`12h`},(err,token) => {
+            jwt.sign(payload, process.env.CRYPT_KEY ,{expiresIn:`12h`},(err,token) => {
                 if(err){
                     res.status(403).send({
                         message: "login error occured",
@@ -80,7 +80,7 @@ router.post('/login',async(req,res) =>  {
         return res.status(504).send("bad gateway");
     })
 })
-router.get('/', async(req,res) => {
+router.get('/',async(req,res) => {
     trader.getAllTrader().then((resp) => {
         console.log(resp, "response");
         if(!resp){
@@ -102,7 +102,7 @@ router.get('/', async(req,res) => {
     });
 });
 
-router.get('/id', authenticateTrader,async(req, res) => {
+router.get('/id',async(req, res) => {
     const id = req.query.id.toString();
     await trader.getTraderById(id).then((resp) => {
         if(!resp) {
@@ -144,7 +144,9 @@ router.get('/email', async(req,res) => {
     })
 })
 router.post('/', async(req,res) => {
-    const parsedTrader= JSON.parse(JSON.stringify(req.body));
+    console.log(req.body,"body");
+    const parsedTrader= JSON.parse(JSON.stringify(req.body.userData));
+    console.log(parsedTrader,"parsed trader");
     await trader.addTrader(parsedTrader).then((resp) => {
         if(resp){
             return res.status(201).send({

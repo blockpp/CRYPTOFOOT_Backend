@@ -29,7 +29,7 @@ router.get('/login',async(req,res) => {
         "id" : resp._id,
         "pubKey" : resp.pubKey,
       }
-      jwt.sign(payload,"secret" ,{expiresIn:`12h`},(err,token) => {
+      jwt.sign(payload,'secret' ,{expiresIn:`12h`},(err,token) => {
         if(err){
             res.status(403).send({
                 message: "login error occured",

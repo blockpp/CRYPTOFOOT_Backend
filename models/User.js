@@ -18,6 +18,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    bio : {
+        type: String,
+    },
     pubKey: {
         type: String,
     },

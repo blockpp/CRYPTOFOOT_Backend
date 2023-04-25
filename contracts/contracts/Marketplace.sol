@@ -29,7 +29,7 @@ contract Marketplace is ERC721URIStorage {
         uint256 price, 
         bool sold
     );
-    constructor() ERC721("CRYPTOFOOT NFT","CFNFT") {
+    constructor() ERC721("CRYPTOFOOT NFT","CNFT") {
         owner = msg.sender;
     }
 

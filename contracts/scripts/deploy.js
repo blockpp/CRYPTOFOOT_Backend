@@ -28,11 +28,17 @@ async function main() {
   const OlympCoin = await hre.ethers.getContractFactory("OlympCoin");
   const olympCoin = await OlympCoin.deploy(10000000);
 
+  const Marketplace =await hre.ethers.getContractFactory("Marketplace");
+  const marketplace = await Marketplace.deploy();
+  await marketplace.deployed();
   console.log(roles.address,"Roles Contract address");
   console.log(admin.address,"admin Contract address");
   console.log(corporate.address,"corporate Contract address");
   console.log(trader.address,"trader Contract address");
   console.log(olympCoin.address,"OlymCoin Contract address");
+  console.log(marketplace.address,"marketplace Contract address");
+
+
   
 
 
