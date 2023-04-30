@@ -16,6 +16,7 @@ const bodyParser = require('body-parser');
 const traderRouter = require('./routes/Trader');
 const adminRouter = require('./routes/Admin');
 const corporateRouter = require('./routes/Corporate');
+const marketplaceRouter = require('./routes/Marketplace');
 const {authenticateTrader,authenticateAdmin,authenticateCorporate} = require('./middleware/Authenticate');
 
 var app = express();
@@ -41,6 +42,7 @@ app.use('/users', usersRouter);
 app.use('/trader',traderRouter);
 app.use('/corporate' , corporateRouter);
 app.use('/admin', adminRouter);
+app.use('/marketplace', marketplaceRouter);
 
 // app.use('/trader',authenticateTrader ,authenticateAdmin,traderRouter);
 // app.use('/admin',authenticateAdmin, adminRouter);

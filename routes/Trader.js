@@ -144,31 +144,33 @@ router.get('/email', async(req,res) => {
     })
 })
 router.post('/', async(req,res) => {
-    console.log(req.body,"body");
-    const parsedTrader= JSON.parse(JSON.stringify(req.body.userData));
-    console.log(parsedTrader,"parsed trader");
-    await trader.addTrader(parsedTrader).then((resp) => {
-        if(resp){
-            return res.status(201).send({
-                message: "Trader created",
-                value: resp
-            });
-        }
-        if (!resp) {
-            return res.status(400).send({
-                message:"trader not created",
-                value: resp
-            });
-        }else {
-            return res.status(500).send({
-                message:"server error",
-                value: resp
-            });
-        }
-    }).catch((err) => {
-        console.log(err, "502 bad gateway error");
-        return res.status(502).send("bad gateway");
-    })
+   try {
+     console.log(req.body,"body");
+     const parsedTrader= JSON.parse(JSON.stringify(req.body.userData));
+     console.log(parsedTrader,"parsed trader");
+     await trader.addTrader(parsedTrader).then((resp) => {
+         if(resp){
+             return res.status(201).send({
+                 message: "Trader created",
+                 value: resp
+             });
+         }
+         if (!resp) {
+             return res.status(400).send({
+                 message:"trader not created",
+                 value: resp
+             });
+         }else {
+             return res.status(500).send({
+                 message:"server error",
+                 value: resp
+             });
+         }
+     });
+   } catch (err) {
+    console.log(err, "502 bad gateway error");
+    return res.status(502).send("bad gateway");
+   }
         
 });
 

@@ -109,7 +109,7 @@ module.exports = class TraderUtils{
             let wallet =await traderUtilsWeb3.addWallet();
             console.log(wallet.privateKey);
             const newTrader = new Trader();
-            if(!traderExistByEmail  && traderExistByUsername & traderExistByPhoneNumber && wallet == null){
+            if(traderExistByEmail  && traderExistByUsername && traderExistByPhoneNumber || wallet == null){
                 return false;
             }
                 newTrader.username = user.username;

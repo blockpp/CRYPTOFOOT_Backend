@@ -77,6 +77,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "author",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "price",
         "type": "uint256"
@@ -212,6 +218,11 @@
             "type": "address"
           },
           {
+            "internalType": "address payable",
+            "name": "author",
+            "type": "address"
+          },
+          {
             "internalType": "uint256",
             "name": "price",
             "type": "uint256"
@@ -252,6 +263,11 @@
             "type": "address"
           },
           {
+            "internalType": "address payable",
+            "name": "author",
+            "type": "address"
+          },
+          {
             "internalType": "uint256",
             "name": "price",
             "type": "uint256"
@@ -289,6 +305,11 @@
           {
             "internalType": "address payable",
             "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address payable",
+            "name": "author",
             "type": "address"
           },
           {

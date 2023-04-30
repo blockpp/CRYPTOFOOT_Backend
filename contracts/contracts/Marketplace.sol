@@ -19,6 +19,7 @@ contract Marketplace is ERC721URIStorage {
         uint256 tokenId;
         address payable seller;
         address  payable owner;
+        address  payable author;
         uint256 price ;
         bool sold;
     }
@@ -26,10 +27,11 @@ contract Marketplace is ERC721URIStorage {
         uint256 index,
         address seller,
         address owner,
+        address author,
         uint256 price, 
         bool sold
     );
-    constructor() ERC721("CRYPTOFOOT NFT","CNFT") {
+    constructor() ERC721("CRYPTOFOOT NFT","CFNFT") {
         owner = msg.sender;
     }
 
@@ -69,12 +71,13 @@ contract Marketplace is ERC721URIStorage {
         IdMarketItem[tokenID] = MarketItem(
             tokenID,
             payable(msg.sender),
-            payable(address(this)),
-            price,
+            payable(msg.sender),
+            payable(msg.sender),
+            price * 1 ether,
             false
         );
-        _transfer(msg.sender , address(this), tokenID);
-        emit MarketItemCreated(tokenID,msg.sender , address(this) , price , false );
+        _transfer(msg.sender , owner, tokenID);
+        emit MarketItemCreated(tokenID,msg.sender , owner ,msg.sender, price , false );
 
     }
     // FUNCTION FOR RESALE TOKEN
@@ -84,9 +87,9 @@ contract Marketplace is ERC721URIStorage {
         IdMarketItem[_tokenId].sold = false;
         IdMarketItem[_tokenId].price = _price * 1 ether;
         IdMarketItem[_tokenId].seller = payable(msg.sender);
-        IdMarketItem[_tokenId].owner = payable(address(this));
+        IdMarketItem[_tokenId].owner = payable(owner);
         _itemsSold.decrement();
-        _transfer(msg.sender , address(this) , _tokenId);
+        _transfer(msg.sender , owner , _tokenId);
     }
     // FUNCTION CREATEMARKETSALE
     function createMarketSell(uint256  _tokenId) public payable {
@@ -97,7 +100,7 @@ contract Marketplace is ERC721URIStorage {
         IdMarketItem[_tokenId].owner =  payable(address(0));
 
         _itemsSold.increment();
-        _transfer(address(this) , msg.sender , _tokenId);
+        _transfer(owner , msg.sender , _tokenId);
         payable(owner).transfer(listingPrice);
         payable(IdMarketItem[_tokenId].seller).transfer(msg.value);
     }
@@ -110,7 +113,7 @@ contract Marketplace is ERC721URIStorage {
 
         MarketItem[] memory items = new MarketItem[](unsoldItems);
         for(uint256 i = 0;  i < itemCount ; i++){
-            if(IdMarketItem[i+1].owner == address(this)){
+            if(IdMarketItem[i+1].owner == owner){
                 uint256 currentID = i+1;
                 MarketItem storage  currentItem = IdMarketItem[currentID];
                 items[currentIndex] = currentItem;
