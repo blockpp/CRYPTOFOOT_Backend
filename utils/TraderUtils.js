@@ -1,9 +1,45 @@
-const { Agent } = require('http');
 const Trader =require('../models/Trader');
-
+const TraderUtilsWeb3 = require('./TraderUtilsWeb3');
+const traderUtilsWeb3 = new TraderUtilsWeb3();
 module.exports = class TraderUtils{
-    constructor(){}
+    constructor(){
+        
+    }
 
+    async validatePasswordById(_id, _password){
+        try {
+            const trader = await Trader.findById(_id);
+            if(trader === null){
+                return false; 
+            }
+            const result = await trader.validPassword(_password);
+            if(result){
+                return trader;
+            }else {
+                return result;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+    async validatePassword(_username , _password){
+        try {
+            const trader = await Trader.findOne({"username": _username});
+            if(trader === null){
+                return false; 
+            }
+            const result = await trader.validPassword(_password);
+            if(result){
+                return trader;
+            }else {
+                return result;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
     async getTraderByTags(_options){
     
         try {
@@ -70,8 +106,10 @@ module.exports = class TraderUtils{
             console.log(traderExistByEmail,"email");
             console.log(traderExistByUsername, "username");
             console.log(traderExistByPhoneNumber,"phone number");
+            let wallet =await traderUtilsWeb3.addWallet();
+            console.log(wallet.privateKey);
             const newTrader = new Trader();
-            if(!traderExistByEmail  && traderExistByUsername & traderExistByPhoneNumber ){
+            if(traderExistByEmail  && traderExistByUsername && traderExistByPhoneNumber || wallet == null){
                 return false;
             }
                 newTrader.username = user.username;
@@ -80,13 +118,17 @@ module.exports = class TraderUtils{
                 newTrader.name = user.name;
                 newTrader.address = user.address;
                 newTrader.age = user.age;
+                newTrader.bio = user.bio;
                 newTrader.phoneNumber = user.phoneNumber;
-    
+                newTrader.pubKey = wallet.address;
+                newTrader.setWallet(wallet.privateKey);
                 await newTrader.save().catch((error) => {
                     console.log(error);
                     return null;
                 });
-                return true;
+                const web3result = await traderUtilsWeb3.addTrader(newTrader._id,newTrader.pubKey);
+                
+                return web3result;
             
 
         } catch (error) {  
@@ -175,6 +217,52 @@ module.exports = class TraderUtils{
         } catch (error) {
             console.log(error)
             return null
+        }
+    }
+    async resetPassword(_id , _password,_newPassword){
+        try {
+             const trader = await this.getTraderById(_id);
+             console.log(trader ,"trader ss");
+             if(trader != null){
+                     trader.setPassword(_newPassword);
+                     await trader.save();
+                     return true;
+             }else {
+                 return false;
+             }   
+        } catch (error) {
+             console.log(error);
+             return null;
+        }
+    }
+    async getTraderWeb3ById(_id){
+        try {
+            let trader = await Trader.findById(_id);
+            if(trader == null){
+                return false;
+            }else {
+                const privateKey = trader.getWallet().toString();
+                console.log(privateKey);
+                let traderWeb3 = await traderUtilsWeb3.getTrader(privateKey);
+                return traderWeb3;
+            }
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+    async getWalletById(_id){
+        try {
+            const trader = await Trader.findById(_id);
+            if(trader == null ){
+                return false;
+            }else {
+                const privKey = trader.getWallet();
+                const wallet = await traderUtilsWeb3.getWallet(privKey);
+                return wallet;
+            }
+        } catch (error) {
+            return null;
         }
     }
 }

@@ -18,6 +18,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    bio : {
+        type: String,
+    },
     pubKey: {
         type: String,
     },
@@ -34,22 +37,26 @@ const UserSchema = new mongoose.Schema({
     validated: {
         type: Boolean,
         default: false,
+    },
+    salt:{
+        type: String,
+        required: true
     }
 
 }, options);
 
 UserSchema.methods.setPassword = function(password) {
-    this.salt = crypto.randomBytes(16).toString('base64');
-    this.password = crypto.pbkdf2Sync(password, this.salt,1000,64,'sha512').toString('base64');
+    this.salt = crypto.randomBytes(16).toString(`hex`);
+    this.password = crypto.pbkdf2Sync(password, this.salt,1000,64,`sha512`).toString(`hex`);
 };
-UserSchema.method.validPassword = function(password){
+UserSchema.methods.validPassword = function(password){
     var hash = crypto.pbkdf2Sync(password,
-    this.password,1000,64,"sha512").toString('base64');
+    this.salt,1000,64,`sha512`).toString(`hex`);
     console.log(password,hash,this.password);
     return this.password === hash;
 };
 UserSchema.methods.setWallet = function(wallet){
-    var encryptedPrivKey = aes256.encrypt(process.env.CRYPT_KEY);
+    var encryptedPrivKey = aes256.encrypt(process.env.CRYPT_KEY,wallet);
     this.privKey = encryptedPrivKey;
 };
 UserSchema.methods.getWallet = function(){

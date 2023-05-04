@@ -37,10 +37,28 @@ module.exports = class UserUtils {
     async validatePassword(_username, _password){
         try {
             const userExist = await User.findOne({'username': _username});
-            return userExist.validPassword(_password);
+            const result = userExist.validPassword(_password);
+            if(result){
+                return userExist;
+            }else {
+                return false;
+            }
         } catch (error) {
             return null;
             
+        }
+    }
+    async getUserByUserName(_username , _password) {
+        try{
+            const userExist = await User.findOne({'username' : _username});
+            if(userExist == null ){
+                return false;
+            }else {
+                return userExist;
+            }
+        }
+        catch(error){
+            return null;
         }
     }
 }

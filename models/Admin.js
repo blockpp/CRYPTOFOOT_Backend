@@ -17,9 +17,6 @@ const AdminSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    googleId: {
-        type: String,
-    },
     phoneNumber: {
         type: String,
         required: true,
