@@ -13,9 +13,8 @@ module.exports = class MarketplaceWeb3 {
     async createToken(tokenURI , price,id){
         try {
             const crp = await corporate.getCorporateById(id);
-            let privKey =  crp.getWallet();
-            console.log(privKey , "privKey")
             if (crp) {
+                let privKey =  crp.getWallet();
                 await this.provider.getNetwork();
                 const parsedPrice = ethers.utils.parseEther(price);
                 const wallet  = new Wallet(privKey,this.provider).connect(this.provider);
@@ -103,8 +102,9 @@ module.exports = class MarketplaceWeb3 {
             return null;
         }
     }
-    async fetchMyNFT(privKey){
+    async fetchMyNFT(id){
         try {
+
             await this.provider.getNetwork();
             const wallet = new Wallet(privKey , this.provider).connect(this.provider);
             const marketplace = new ethers.Contract(this.ContractAddress, MarketplaceJson , wallet);
@@ -114,13 +114,17 @@ module.exports = class MarketplaceWeb3 {
             return null
         }
     }
-    async fetchItemsListed(privKey){
+    async fetchItemsListed(id){
         try {
+            const crp = await corporate.getCorporateById(id);
+            let privKey =  crp.getWallet();
+            if(crp){
             await this.provider.getNetwork();
             const wallet = new Wallet(privKey , this.provider).connect(this.provider);
             const marketplace = new ethers.Contract(this.ContractAddress, MarketplaceJson , wallet);
             const tx = await marketplace.fetchItemsListed();
             return tx;
+        }else return false;
         } catch (error) {
             return null
         }

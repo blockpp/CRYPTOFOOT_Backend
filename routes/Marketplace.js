@@ -52,5 +52,25 @@ router.patch('/' ,async(req, res) => {
 
     }
 });
+router.get('/mynft/:id',async(req, res) => {
+    try {
+        const id =req.params.id;
+        await marketplaceUtils.fetchItemsListed(id).then((resp) => {
+            if(!resp){
+                return res.status(404).send({
+                    message:"corporate not found",
+                    value : resp,
+                });
+            }else if (resp == null) {
+                return res.status(500).send("internal blockchain error");
 
+            }else {
+                return res.status(200).send(resp);
+            }
+        })
+    } catch (error) {
+        
+    }
+
+})
 module.exports = router;
