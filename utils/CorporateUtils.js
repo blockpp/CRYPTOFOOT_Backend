@@ -6,6 +6,7 @@ module.exports = class CorporateUtils{
 
     async addCorporate(corporate){
         try {
+            console.log("searching with this email address0",corporate);
             const corporateExistByemail = await Corporate.findOne({$or:[{"email": corporate.email},  {'username': corporate.username} , {'legalName':corporate.legalName} , {'fiscalAddress' : corporate.fiscalAddress }]});
             console.log(corporateExistByemail ,"corporate by email");
             const wallet = await corporateUtilsWeb3.addWallet();
@@ -70,6 +71,7 @@ module.exports = class CorporateUtils{
     }
     async getCorporateById(_id){
         try{
+            
             let corporate = await Corporate.findById(_id);
             if(corporate === null ){
                 return false;
