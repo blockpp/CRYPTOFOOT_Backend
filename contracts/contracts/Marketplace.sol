@@ -14,7 +14,7 @@ contract Marketplace is ERC721URIStorage {
     Counters.Counter private _itemsSold;
     uint256 listingPrice = 0.0015 ether;
     address private owner;
-    mapping (uint256 => MarketItem) private  IdMarketItem;
+    mapping (uint256 => MarketItem) public  IdMarketItem;
 
     struct  MarketItem {
         uint256 tokenId;
@@ -72,7 +72,7 @@ contract Marketplace is ERC721URIStorage {
         IdMarketItem[tokenID] = MarketItem(
             tokenID,
             payable(msg.sender),
-            payable(msg.sender),
+            payable(owner),
             payable(msg.sender),
             price * 1 ether,
             false
@@ -83,7 +83,7 @@ contract Marketplace is ERC721URIStorage {
     }
     // FUNCTION FOR RESALE TOKEN
     function reSellToken(uint256 _tokenId , uint256 _price) public payable  {
-        require(IdMarketItem[_tokenId].owner == msg.sender , "Only Item Owner can perform a resell");
+        require(IdMarketItem[_tokenId].seller == msg.sender , "Only Item Owner can perform a resell");
         require(msg.value == listingPrice, "price must be equal to price");
         IdMarketItem[_tokenId].sold = false;
         IdMarketItem[_tokenId].price = _price * 1 ether;
@@ -98,7 +98,7 @@ contract Marketplace is ERC721URIStorage {
         require(msg.value == price , "please submit the asking price in order");
         IdMarketItem[_tokenId].owner = payable(msg.sender);
         IdMarketItem[_tokenId].sold = true;
-        IdMarketItem[_tokenId].owner =  payable(address(0));
+        IdMarketItem[_tokenId].owner =  payable(msg.sender);
 
         _itemsSold.increment();
         _transfer(owner , msg.sender , _tokenId);
@@ -113,11 +113,12 @@ contract Marketplace is ERC721URIStorage {
         uint256 currentIndex = 0;
 
         MarketItem[] memory items = new MarketItem[](unsoldItems);
-        for(uint256 i = 0;  i < itemCount ; i++){
-            if(IdMarketItem[i+1].owner == owner){
-                uint256 currentID = i+1;
-                MarketItem storage  currentItem = IdMarketItem[currentID];
+        for(uint256 i = 1;  i <= itemCount ; i++){
+            if(IdMarketItem[i].owner == owner){
+                uint256 currentID = i;
+                MarketItem memory  currentItem = IdMarketItem[currentID];
                 items[currentIndex] = currentItem;
+                currentIndex++;
             }
         }
         return items;

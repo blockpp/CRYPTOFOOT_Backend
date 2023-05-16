@@ -35,8 +35,10 @@ module.exports = class UserUtils {
         }
     }
     async validatePassword(_username, _password){
+       
         try {
             const userExist = await User.findOne({'username': _username});
+            
             const result = userExist.validPassword(_password);
             if(result){
                 return userExist;
@@ -44,6 +46,7 @@ module.exports = class UserUtils {
                 return false;
             }
         } catch (error) {
+            console.log("error catched here ",error);
             return null;
             
         }
