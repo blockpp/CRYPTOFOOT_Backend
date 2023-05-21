@@ -3,11 +3,12 @@ module.exports = class UserUtils {
     constructor(){}
     async checkRoleById(_id){
         try {
-            const userRole =await  User.findById(_id);
+            const userRole =await  User.findById({'_id': _id});
             if(userRole == null ){
+                console.log("didnot get it")
                 return false;
             }
-            return userRole.role;
+            return userRole;
         } catch (error) {
             return null;
         }
@@ -64,4 +65,5 @@ module.exports = class UserUtils {
             return null;
         }
     }
+    
 }

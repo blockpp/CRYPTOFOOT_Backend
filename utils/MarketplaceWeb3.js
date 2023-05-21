@@ -82,6 +82,7 @@ module.exports = class MarketplaceWeb3 {
                 let priceStr = price.toString();
                 const parsedPrice = ethers.utils.parseEther(priceStr);
                 const wallet = new Wallet(privateKey , this.provider).connect(this.provider);
+                console.log("got my wallet:  ",wallet)
                 const marketplace = new ethers.Contract(this.ContractAddress , MarketplaceJson ,wallet);
                 const gasPrice = await this.provider.getFeeData();
                 const tx = await marketplace.createMarketSell(tokenId.toString() , {

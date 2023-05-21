@@ -1,9 +1,11 @@
 var express = require('express');
 const userUtils = require('../utils/UserUtils');
+const userUtilsWeb3 = require('../utils/UserUtilsWeb3');
 const jwt = require('jsonwebtoken');
 var router = express.Router();
 require('dotenv').config();
 const user = new userUtils();
+const userWeb3 = new userUtilsWeb3();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -11,8 +13,6 @@ router.get('/', function(req, res, next) {
 router.get('/login',async(req,res) => {
   const username = req.query.username;
   const password = req.query.password;
-  console.log('login', username, password);
-
   await user.validatePassword(username, password).then((resp) => {
     if(resp == false){
       console.log('wrong password', username, password);
@@ -46,11 +46,81 @@ router.get('/login',async(req,res) => {
             res.status(200).send({token: token,data:payload});
         }
       });
+      if (resp.role==="trader") {
+
+        
+      } else {
+        
+      }
+     
     }
   }).catch((err) => {
     console.log("bad gateway",err);
     return res.status(504).send("bad gateway");
   });
 })
+router.post('/details',async(req,res) => {
+  const id= req.body.id;
+  console.log(req.body)
+  console.log(req.params)
+  
+  await userWeb3.getWalletDetails(id).then((resp) => {
+    if(resp == false){
+      console.log('wrong password');
+      return res.status(404).send({
+
+        message : "wron / or  not found",
+        value :resp,
+      });
+    }else if(resp == null){
+      console.log("db error: " + resp);
+      return res.status(500).send({
+        message: "database error",
+        value : resp
+      });
+    }else {
+      
+      return res.status(200).send(resp);
+     
+    }})
+  // }).catch((err) => {
+    // console.log("bad gateway",err);
+    // return res.status(504).send("bad gateway");
+  // });
+})
+
+
+
+router.post('/exportpriv',async(req,res) => {
+  const id= req.body.id;
+  const password= req.body.password;
+  
+  await userWeb3.exportPrivateKey(id,password).then((resp) => {
+    if(resp == false){
+      console.log('wrong password');
+      return res.status(404).send({
+
+        message : "wron / or  not found",
+        value :resp,
+      });
+    }else if(resp == null){
+      console.log("db error: " + resp);
+      return res.status(500).send({
+        message: "database error",
+        value : resp
+      });
+    }else {
+      
+      return res.status(200).send(resp);
+     
+    }
+  }).catch((err) => {
+    console.log("bad gateway",err);
+    return res.status(504).send("bad gateway");
+  });
+})
+
+
+
 
 module.exports = router;
