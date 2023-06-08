@@ -65,5 +65,18 @@ module.exports = class UserUtils {
             return null;
         }
     }
+    async getUserByWallet(_wallet) {
+        try {
+            const userExist = await User.findOne({'pubKey' : _wallet});
+            if(userExist === null) {
+                return false;
+            }else {
+                return userExist
+            }
+        } catch (error) {
+            console.log(error);
+            return null
+        }
+    }
     
 }

@@ -14,8 +14,8 @@ router.get('/login',async(req,res) => {
   const username = req.query.username;
   const password = req.query.password;
   await user.validatePassword(username, password).then((resp) => {
+    console.log(resp, "login response");
     if(resp == false){
-      console.log('wrong password', username, password);
       return res.status(404).send({
 
         message : "wrong password / or username not found",
@@ -120,7 +120,25 @@ router.post('/exportpriv',async(req,res) => {
   });
 })
 
+router.get('/getByWallet/', async(req , res) => {
+  try {
+    const wallet = req.query.wallet;
+    console.log(wallet , "wallet params");
+    await user.getUserByWallet(wallet).then((resp) => {
+      console.log(resp , "user by wallet");
 
+      if (!resp) {
+        return res.status(404).send(resp);
+      }else if (resp === null) {
+        return res.status(500).send(resp);
+      }else {
+        return res.status(200).send(resp);
+      }
+    })
+  } catch (error) {
+    return res.status(504).send(error);
+  }
+})
 
 
 module.exports = router;

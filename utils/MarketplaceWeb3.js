@@ -108,9 +108,11 @@ module.exports = class MarketplaceWeb3 {
             const marketplace = new ethers.Contract(this.ContractAddress, MarketplaceJson , wallet);
           
             const tx = await marketplace.fetchMarketItem();
+            console.log(tx, "NFT items ");
             return tx;
             
         } catch (error) {
+            console.log(error, "errror blockchain nft items");
             return null;
         }
     }

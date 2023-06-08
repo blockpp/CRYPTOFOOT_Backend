@@ -21,6 +21,7 @@ contract Marketplace is ERC721URIStorage {
         address payable seller;
         address  payable owner;
         address  payable author;
+        uint256 timestamp;
         uint256 price ;
         bool sold;
     }
@@ -74,6 +75,7 @@ contract Marketplace is ERC721URIStorage {
             payable(msg.sender),
             payable(owner),
             payable(msg.sender),
+            block.timestamp,
             price * 1 ether,
             false
         );
@@ -155,8 +157,7 @@ contract Marketplace is ERC721URIStorage {
         for (uint256 i = 0; i <  totalCount; i++) {
             if(IdMarketItem[i  + 1 ].seller == msg.sender){
                 itemCount++;
-            }
-        }
+            }current
         MarketItem[] memory items = new MarketItem[](itemCount);
         for (uint256 i = 0; i < totalCount; i++) {
             if(IdMarketItem[i+1].seller == msg.sender){

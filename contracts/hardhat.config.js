@@ -6,11 +6,11 @@ module.exports = {
   networks: {
     localhost: {
       url: "http://localhost:8545",
-      accounts: ["0xd4b63624947c4da6c7ebe46a7246af332e94be304655938f56180793ebfbd532"],
+      accounts: ["0xa5692f0dd913400276ea060ea341e96efaa5c855b5c88a9abc924a7803c0676c"],
       gas: 2100000,
       gasPrice: 8000000000,
       saveDeployments: true,
-      chainId : 5777
+      chainId : 1337
     },
     goerli : {
       url: "https://eth-goerli.g.alchemy.com/v2/iKrbf5JMaM3SIQ3juSw45meeeh0z2vy7",

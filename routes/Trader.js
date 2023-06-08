@@ -113,10 +113,7 @@ router.get('/username' , async(req,res) => {
             }else if (resp == null) {
                 return res.status(500).send("server error");
             }else {
-                return res.status(200).send({
-                    message : "trader found",
-                    value : resp,
-                });
+                return res.status(200).send(resp);
             }
         })
     } catch (error) {
@@ -127,6 +124,7 @@ router.get('/username' , async(req,res) => {
 router.get('/id',async(req, res) => {
     const id = req.query.id.toString();
     await trader.getTraderById(id).then((resp) => {
+        console.log(resp);
         if(!resp) {
             return res.status(404).send({
                 message: "trader not found",
@@ -135,10 +133,7 @@ router.get('/id',async(req, res) => {
         }else if (resp == null ){
             return res.status(500).send("server error");
         }
-        return res.status(200).send({
-            message: "trader found",
-            value: resp
-        });
+        return res.status(200).send(resp);
     }).catch((error) => {
         console.log(error);
         return res.status(502).send("bad gateway");

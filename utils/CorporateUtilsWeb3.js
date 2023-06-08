@@ -13,6 +13,7 @@ module.exports  = class CorporateutilsWEB3{
             await this.provider.getNetwork();
             const wallet = new Wallet.createRandom().connect(this.provider);
             console.log(wallet.address, "address");
+            
             console.log(wallet.privateKey,"private key");
             console.log(wallet.mnemonic, "mnemonic");
             return wallet;
