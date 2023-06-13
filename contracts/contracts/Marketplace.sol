@@ -157,7 +157,8 @@ contract Marketplace is ERC721URIStorage {
         for (uint256 i = 0; i <  totalCount; i++) {
             if(IdMarketItem[i  + 1 ].seller == msg.sender){
                 itemCount++;
-            }current
+            }
+        }
         MarketItem[] memory items = new MarketItem[](itemCount);
         for (uint256 i = 0; i < totalCount; i++) {
             if(IdMarketItem[i+1].seller == msg.sender){
