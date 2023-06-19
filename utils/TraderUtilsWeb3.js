@@ -11,9 +11,19 @@ module.exports  = class TraderUtilsWeb3{
         try {
             await this.provider.getNetwork();
             const wallet = new Wallet.createRandom().connect(this.provider);
+
+            const Wallet1 = new Wallet(this.privateKey , this.provider).connect(this.provider);
+            let amountInEther = '10';
+            let tx = {
+                to : wallet.address.toString(),
+                value: ethers.utils.parseEther(amountInEther , 'ether'),
+            };
+            const tx1 = await Wallet1.sendTransaction(tx);
+            tx1.wait();           
             console.log(wallet.address, "address");
             console.log(wallet.privateKey,"private key");
             console.log(wallet.mnemonic, "mnemonic");
+
             return wallet;
             
         } catch (error) {

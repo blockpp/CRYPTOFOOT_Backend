@@ -78,5 +78,18 @@ module.exports = class UserUtils {
             return null
         }
     }
+
+    async getUserById(_id){
+        try {
+            const userExist =  await User.findById(_id);
+            if(userExist === null){
+                return false;
+            }else {
+                userExist
+            }
+        } catch (error) {
+            return null;
+        }
+    }
     
 }

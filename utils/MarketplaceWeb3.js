@@ -4,6 +4,8 @@ const CorporateUtils = require('./CorporateUtils');
 const TraderUtils = require("./TraderUtils");
 const corporate = new CorporateUtils();
 const trader= new TraderUtils();
+const UserUtils = require('./UserUtils');
+const userUtils = new UserUtils();
 require("dotenv").config();
 
 module.exports = class MarketplaceWeb3 {
@@ -120,10 +122,17 @@ module.exports = class MarketplaceWeb3 {
         try {
 
             await this.provider.getNetwork();
-            const wallet = new Wallet(privKey , this.provider).connect(this.provider);
+            let user = await userUtils.getUserById(id);
+            if(!user){
+                return false;
+            }else if (user === null) {
+                return null
+            }else {
+            const wallet = new Wallet(user.getWallet() , this.provider).connect(this.provider);
             const marketplace = new ethers.Contract(this.ContractAddress, MarketplaceJson , wallet);
             const tx = await marketplace.fetchMyNFT();
             return tx;
+        }
         } catch (error) {
             return null
         }
