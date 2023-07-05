@@ -2,6 +2,11 @@ var express = require('express');
 const userUtils = require('../utils/UserUtils');
 const userUtilsWeb3 = require('../utils/UserUtilsWeb3');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const axios = require('axios');
+const path = require('path');
 var router = express.Router();
 require('dotenv').config();
 const user = new userUtils();
@@ -139,6 +144,75 @@ router.get('/getByWallet/', async(req , res) => {
     return res.status(504).send(error);
   }
 })
+
+const upload = multer({ dest: './idcards' }); // Specify the folder where you want to save the images
+
+router.post('/save-idcard', upload.single('image'), (req, res) => {
+  // The uploaded image is available as req.file
+  const image = req.file;
+  
+  // Extract the file extension from the original name
+  const fileExtension = path.extname(image.originalname);
+  
+  // Read the contents of the uploaded file
+  fs.readFile(image.path,  (err, data) => {
+    if (err) {
+      console.error('Error reading the file:', err);
+      return res.status(500).json({ error: 'Failed to save the image.' });
+    }
+
+    // Specify the path and filename where you want to save the image
+    const imagePath = './idcards/' +uuidv4()+ fileExtension;
+
+    // Write the file to the specified path
+     fs.writeFile(imagePath, data, (err) => {
+      if (err) {
+        console.error('Error saving the file:', err);
+        return res.status(500).json({ error: 'Failed to save the image.' });
+      }
+
+
+      // Delete the temporary file created by multer
+      fs.unlink(image.path, (err) => {
+        if (err) {
+          console.error('Error deleting the temporary file:', err);
+        }
+      });
+
+
+        // Get the absolute path to the saved image
+        const absolutePath = path.resolve(imagePath);
+
+        // Confirmation of the identity of the creator
+        const postData = {
+          id_path: absolutePath
+        };
+
+        axios.post('http://localhost:5000/api/compareface', postData)
+        .then(response => {
+          result = response.data;
+          console.log(result)
+          if(result!=='True'){
+            //delete the id card image so that can be reselected
+            fs.unlink(imagePath, (err) => {
+              if (err) {
+                console.error('Error deleting the image:', err);
+              } else {
+                console.log('Image deleted successfully.');
+              }
+            });
+          }
+          return res.status(200).json({result});
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+        
+        //res.json({ path: absolutePath });
+      });
+    });
+  });
+
 
 
 module.exports = router;

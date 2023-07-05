@@ -4,12 +4,15 @@ const corporateJson = require("../abi/contracts/Corporate.sol/Corporate.json");
 module.exports  = class CorporateutilsWEB3{
 
     constructor(){
+        
         this.privateKey = process.env.PRIVATE_KEY;
         this.provider = new ethers.providers.JsonRpcProvider(process.env.PROVIDER_URI);
         this.ContractAddress = process.env.CORPORATE_ADDRESS;
     }
     async addWallet(){
+        
         try {
+            
             await this.provider.getNetwork();
             const wallet = new Wallet.createRandom().connect(this.provider);
             const Wallet1 = new Wallet(this.privateKey , this.provider).connect(this.provider);
