@@ -148,9 +148,9 @@ router.get('/getByWallet/', async(req , res) => {
 const upload = multer({ dest: './idcards' }); // Specify the folder where you want to save the images
 
 router.post('/save-idcard', upload.single('image'), (req, res) => {
+  
   // The uploaded image is available as req.file
   const image = req.file;
-  
   // Extract the file extension from the original name
   const fileExtension = path.extname(image.originalname);
   
@@ -191,9 +191,7 @@ router.post('/save-idcard', upload.single('image'), (req, res) => {
         axios.post('http://localhost:5000/api/compareface', postData)
         .then(response => {
           result = response.data;
-          console.log(result)
-          if(result!=='True'){
-            //delete the id card image so that can be reselected
+            // delete the image once the verification is done!
             fs.unlink(imagePath, (err) => {
               if (err) {
                 console.error('Error deleting the image:', err);
@@ -201,10 +199,11 @@ router.post('/save-idcard', upload.single('image'), (req, res) => {
                 console.log('Image deleted successfully.');
               }
             });
-          }
-          return res.status(200).json({result});
+
+          return res.status(200).json({result,absolutePath});
         })
         .catch(error => {
+          
           console.error('Error:', error);
         });
         
