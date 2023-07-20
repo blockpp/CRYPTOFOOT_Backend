@@ -4,10 +4,39 @@ from flask import Flask, request, jsonify
 import random
 import string
 import os
+from flask import Flask, request
+from flasgger import Swagger
+from flasgger.utils import swag_from
+from flasgger import LazyString, LazyJSONEncoder
+
+
 # Create a Flask application instance
 app = Flask(__name__)
 
+# swagger config begin
+app.config["SWAGGER"] = {"title": "Swagger-UI", "uiversion": 2}
 
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": "apispec_1",
+            "route": "/apispec_1.json",
+            "rule_filter": lambda rule: True,  # all in
+            "model_filter": lambda tag: True,  # all in
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    # "static_folder": "static",  # must be set by user
+    "swagger_ui": True,
+    "specs_route": "/doc/",
+}
+
+
+swagger = Swagger(app, config=swagger_config)
+# swagger config end
+
+# generate random string for image name
 def generate_random_string(length):
     letters = string.ascii_letters
     return ''.join(random.choice(letters) for _ in range(length))
@@ -16,6 +45,7 @@ def generate_random_string(length):
 
 # Define a route and a corresponding function
 @app.route('/api/compareface', methods=['POST'])
+@swag_from("swagger_config.yml")
 def compareface():
     request_data = request.get_json()
     id_path = request_data.get('id_path')
