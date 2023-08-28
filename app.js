@@ -17,6 +17,7 @@ const traderRouter = require('./routes/Trader');
 const adminRouter = require('./routes/Admin');
 const corporateRouter = require('./routes/Corporate');
 const marketplaceRouter = require('./routes/Marketplace');
+const paymeeRouter = require('./routes/paymee');
 const {authenticateTrader,authenticateAdmin,authenticateCorporate} = require('./middleware/Authenticate');
 
 var app = express();
@@ -43,6 +44,7 @@ app.use('/trader',traderRouter);
 app.use('/corporate' , corporateRouter);
 app.use('/admin', adminRouter);
 app.use('/marketplace', marketplaceRouter);
+app.use('/paymee', paymeeRouter);
 
 // app.use('/trader',authenticateTrader ,authenticateAdmin,traderRouter);
 // app.use('/admin',authenticateAdmin, adminRouter);
