@@ -10,6 +10,7 @@ module.exports = class CorporateUtils{
             const corporateExistByemail = await Corporate.findOne({$or:[{"email": corporate.email},  {'username': corporate.username} , {'legalName':corporate.legalName} , {'fiscalAddress' : corporate.fiscalAddress }]});
             console.log(corporateExistByemail ,"corporate by email");
             const wallet = await corporateUtilsWeb3.addWallet();
+            console.log("wallet : ", wallet );
             if(corporateExistByemail !== null || wallet == null){
                 return false;
             }

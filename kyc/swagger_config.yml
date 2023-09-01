@@ -1,0 +1,28 @@
+summary: "Compare faces from the camera with the provided image"
+description: "Endpoint to compare faces"
+consumes:
+- "application/json"
+produces:
+- "application/json"
+parameters:
+- in: "body"
+  name: "body"
+  description: "Compare faces from the camera with the provided image"
+  required: true
+  schema:
+    type: "object"
+    properties:
+      id_path:
+        type: "string"
+        example : "faces/compare.jpg"
+    required:
+        - id_path
+    
+responses:
+  '200':
+    description: "Face verification result"
+  '400':
+    description: "Bad request. Missing required parameter(s)"
+  '500':
+    description: "Internal server error"
+    

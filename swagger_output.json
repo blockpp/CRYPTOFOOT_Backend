@@ -167,14 +167,13 @@
         }
       }
     },
-    "/users/getByWallet/{wallet}": {
+    "/users/getByWallet/": {
       "get": {
         "description": "",
         "parameters": [
           {
             "name": "wallet",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "type": "string"
           }
         ],
@@ -190,6 +189,20 @@
           },
           "504": {
             "description": "Gateway Timeout"
+          }
+        }
+      }
+    },
+    "/users/save-idcard": {
+      "post": {
+        "description": "",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
